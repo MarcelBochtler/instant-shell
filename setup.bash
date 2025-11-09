@@ -80,7 +80,7 @@ main() {
 
     # Start fish with the bin directory in PATH
     print_info "Starting Fish shell..."
-    PATH="${TMP_DIR}/bin:${PATH}" "${TMP_DIR}/bin/fish" -C "set -g fish_greeting"
+    PATH="${TMP_DIR}/bin:${PATH}" exec "${TMP_DIR}/bin/fish" -C "set -g fish_greeting"
 }
 
 main "$@"

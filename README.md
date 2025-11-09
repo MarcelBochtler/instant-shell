@@ -4,10 +4,10 @@ A simple script to set up a pre-configured portable shell.
 
 ## Quick Installation
 
-To run the setup script, use the following command:
+Download and run the setup script:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/MarcelBochtler/instant-shell/refs/heads/main/setup.bash | bash
+bash <(curl -fsSL https://raw.githubusercontent.com/MarcelBochtler/instant-shell/refs/heads/main/setup.bash)
 ```
 
 ## Requirements
