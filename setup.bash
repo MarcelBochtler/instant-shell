@@ -70,17 +70,25 @@ install_micro() {
     print_success "Micro editor installed successfully"
 }
 
+fetch_fish_config() {
+    print_info "Fetching fish configuration..."
+    curl -sL "https://raw.githubusercontent.com/MarcelBochtler/instant-shell/refs/heads/main/config.fish" -o "${TMP_DIR}/config.fish"
+    print_success "Fish configuration downloaded"
+}
+
 # ============================================================================
 # Main
 # ============================================================================
 
 main() {
     install_fish
+    fetch_fish_config
+
     install_micro
 
     # Start fish with the bin directory in PATH
     print_info "Starting Fish shell..."
-    PATH="${TMP_DIR}/bin:${PATH}" exec "${TMP_DIR}/bin/fish" -C "set -g fish_greeting"
+    PATH="${TMP_DIR}/bin:${PATH}" exec "${TMP_DIR}/bin/fish" -C "source ${TMP_DIR}/config.fish"
 }
 
 main "$@"
