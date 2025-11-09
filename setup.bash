@@ -33,7 +33,7 @@ print_error() {
 # ============================================================================
 
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-TMP_DIR="/tmp/remote-cli-${TIMESTAMP}"
+TMP_DIR="/tmp/instant-shell-${TIMESTAMP}"
 
 # ============================================================================
 # Installation Functions
