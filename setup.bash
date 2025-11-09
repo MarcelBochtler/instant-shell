@@ -55,12 +55,28 @@ install_fish() {
     print_success "Fish shell installed successfully"
 }
 
+install_micro() {
+    print_info "Installing Micro editor..."
+
+    mkdir -p "${TMP_DIR}/bin"
+
+    LATEST_VERSION=$(curl -s https://api.github.com/repos/zyedidia/micro/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/' | sed 's/^v//')
+    print_info "Latest version: ${LATEST_VERSION}"
+
+    # Download and extract
+    print_info "Downloading and extracting..."
+    curl -sL "https://github.com/zyedidia/micro/releases/download/v${LATEST_VERSION}/micro-${LATEST_VERSION}-linux64-static.tar.gz" | tar xzf - -C "${TMP_DIR}/bin" --strip-components=1
+
+    print_success "Micro editor installed successfully"
+}
+
 # ============================================================================
 # Main
 # ============================================================================
 
 main() {
     install_fish
+    install_micro
 
     # Start fish with the bin directory in PATH
     print_info "Starting Fish shell..."
