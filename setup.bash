@@ -16,16 +16,16 @@ NC='\033[0m' # No Color
 # Helper Functions
 # ============================================================================
 
-print_info() {
-    echo -e "${BLUE}[INFO]${NC} $1"
+print_status() {
+    echo -e "${BLUE}$1${NC}"
 }
 
 print_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
+    echo -e "${GREEN}$1${NC}"
 }
 
 print_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
+    echo -e "${RED}$1${NC}"
 }
 
 # ============================================================================
@@ -40,40 +40,23 @@ TMP_DIR="/tmp/instant-shell-${TIMESTAMP}"
 # ============================================================================
 
 install_fish() {
-    print_info "Installing Fish shell..."
-
     mkdir -p "${TMP_DIR}/bin"
-
-    # Get latest version from GitHub API
     LATEST_VERSION=$(curl -s https://api.github.com/repos/fish-shell/fish-shell/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
-    print_info "Latest version: ${LATEST_VERSION}"
-
-    # Download and extract
-    print_info "Downloading and extracting..."
     curl -sL "https://github.com/fish-shell/fish-shell/releases/download/${LATEST_VERSION}/fish-${LATEST_VERSION}-linux-x86_64.tar.xz" | tar xJf - -C "${TMP_DIR}/bin"
 
-    print_success "Fish shell installed successfully"
+    print_status "Fish shell version ${LATEST_VERSION} installed."
 }
 
 install_micro() {
-    print_info "Installing Micro editor..."
-
     mkdir -p "${TMP_DIR}/bin"
-
     LATEST_VERSION=$(curl -s https://api.github.com/repos/zyedidia/micro/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/' | sed 's/^v//')
-    print_info "Latest version: ${LATEST_VERSION}"
-
-    # Download and extract
-    print_info "Downloading and extracting..."
     curl -sL "https://github.com/zyedidia/micro/releases/download/v${LATEST_VERSION}/micro-${LATEST_VERSION}-linux64-static.tar.gz" | tar xzf - -C "${TMP_DIR}/bin" --strip-components=1
 
-    print_success "Micro editor installed successfully"
+    print_status "Micro editor version ${LATEST_VERSION} installed."
 }
 
 fetch_fish_config() {
-    print_info "Fetching fish configuration..."
     curl -sL "https://raw.githubusercontent.com/MarcelBochtler/instant-shell/refs/heads/main/config.fish" -o "${TMP_DIR}/config.fish"
-    print_success "Fish configuration downloaded"
 }
 
 # ============================================================================
@@ -86,8 +69,8 @@ main() {
 
     install_micro
 
-    # Start fish with the bin directory in PATH
-    print_info "Starting Fish shell..."
+    print_success "Setup complete."
+
     PATH="${TMP_DIR}/bin:${PATH}" exec "${TMP_DIR}/bin/fish" -C "source ${TMP_DIR}/config.fish"
 }
 
