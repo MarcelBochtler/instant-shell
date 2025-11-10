@@ -65,8 +65,12 @@ download_and_extract() {
         curl -sL "$url" | tar xJf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
     elif [[ "$filename" == *.tar.gz ]]; then
         curl -sL "$url" | tar xzf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
+    elif [[ "$filename" != *.* ]]; then
+        # Handle binary files (no extension)
+        curl -sL "$url" -o "${TMP_DIR}/${toolname}/${toolname}"
+        chmod +x "${TMP_DIR}/${toolname}/${toolname}"
     else
-        print_error "Unsupported archive format: ${filename}"
+        print_error "Unsupported file format: ${filename}"
         exit 1
     fi
 }
