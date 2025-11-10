@@ -119,6 +119,12 @@ install_zoxide() {
     print_status "zoxide installed."
 }
 
+install_jq() {
+    download_and_extract "jqlang/jq" "jq-linux-amd64" "jq"
+    TOOLS_PATH="${TMP_DIR}/jq:${TOOLS_PATH}"
+    print_status "jq installed."
+}
+
 fetch_fish_config() {
     curl -sL "https://raw.githubusercontent.com/MarcelBochtler/instant-shell/refs/heads/main/config.fish" -o "${TMP_DIR}/config.fish"
 }
@@ -136,6 +142,7 @@ main() {
     install_ripgrep
     install_yazi
     install_zoxide
+    install_jq
 
     print_success "Setup complete."
 
