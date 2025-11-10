@@ -118,7 +118,7 @@ install_yazi() {
 }
 
 install_zoxide() {
-    download_and_extract "ajeetdsouza/zoxide" "zoxide-{VERSION_NO_V}-x86_64-unknown-linux-musl.tar.gz" "zoxide"
+    download_and_extract "ajeetdsouza/zoxide" "zoxide-{VERSION_NO_V}-x86_64-unknown-linux-musl.tar.gz" "zoxide" 0
     TOOLS_PATH="${TMP_DIR}/zoxide:${TOOLS_PATH}"
     print_status "zoxide installed."
 }
