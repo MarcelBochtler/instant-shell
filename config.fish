@@ -12,3 +12,6 @@ alias gd='git diff'
 
 # Directory listing aliases
 alias ll='ls -lah'
+
+# File manager alias
+alias y='yazi'

@@ -29,10 +29,10 @@ print_error() {
 }
 
 download_and_extract() {
-    local repo=$1
-    local filename=$2
-    local toolname=$3
-    local strip=${4:-1}
+    local repo=$1 # GitHub repository in the format "owner/repo"
+    local filename=$2 # Filename with placeholders {VERSION} or {VERSION_NO_V}
+    local toolname=$3 # Name of the tool to download
+    local strip=${4:-1} # The level to strip from the archive (default: 1)
 
     mkdir -p "${TMP_DIR}/${toolname}"
 
@@ -45,14 +45,30 @@ download_and_extract() {
 
     local url="https://github.com/${repo}/releases/download/${version}/${filename}"
 
-    local tar_flags
-    if [[ "$filename" == *.tar.xz ]]; then
-        tar_flags="xJf"
-    elif [[ "$filename" == *.tar.gz ]]; then
-        tar_flags="xzf"
-    fi
+    if [[ "$filename" == *.zip ]]; then
+        # Handle zip files
+        local temp_file="${TMP_DIR}/${toolname}.zip"
+        curl -sL "$url" -o "$temp_file"
 
-    curl -sL "$url" | tar $tar_flags - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
+        local extract_dir="${TMP_DIR}/${toolname}_extract"
+        mkdir -p "$extract_dir"
+        unzip -q "$temp_file" -d "$extract_dir"
+
+        if [ $strip -eq 1 ]; then
+            mv "$extract_dir"/*/* "${TMP_DIR}/${toolname}/"
+        else
+            mv "$extract_dir"/* "${TMP_DIR}/${toolname}/"
+        fi
+
+        rm -rf "$extract_dir" "$temp_file"
+    elif [[ "$filename" == *.tar.xz ]]; then
+        curl -sL "$url" | tar xJf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
+    elif [[ "$filename" == *.tar.gz ]]; then
+        curl -sL "$url" | tar xzf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
+    else
+        print_error "Unsupported archive format: ${filename}"
+        exit 1
+    fi
 }
 
 # ============================================================================
@@ -91,6 +107,12 @@ install_ripgrep() {
     print_status "ripgrep installed."
 }
 
+install_yazi() {
+    download_and_extract "sxyazi/yazi" "yazi-x86_64-unknown-linux-musl.zip" "yazi"
+    TOOLS_PATH="${TMP_DIR}/yazi:${TOOLS_PATH}"
+    print_status "Yazi installed."
+}
+
 fetch_fish_config() {
     curl -sL "https://raw.githubusercontent.com/MarcelBochtler/instant-shell/refs/heads/main/config.fish" -o "${TMP_DIR}/config.fish"
 }
@@ -106,6 +128,7 @@ main() {
     install_micro
     install_fd
     install_ripgrep
+    install_yazi
 
     print_success "Setup complete."
 
