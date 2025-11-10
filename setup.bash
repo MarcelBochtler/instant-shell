@@ -129,6 +129,12 @@ install_jq() {
     print_status "jq installed."
 }
 
+install_yq() {
+    download_and_extract "mikefarah/yq" "yq_linux_amd64" "yq"
+    TOOLS_PATH="${TMP_DIR}/yq:${TOOLS_PATH}"
+    print_status "yq installed."
+}
+
 fetch_fish_config() {
     curl -sL "https://raw.githubusercontent.com/MarcelBochtler/instant-shell/refs/heads/main/config.fish" -o "${TMP_DIR}/config.fish"
 }
@@ -147,6 +153,7 @@ main() {
     install_yazi
     install_zoxide
     install_jq
+    install_yq
 
     print_success "Setup complete."
 
