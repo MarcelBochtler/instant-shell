@@ -113,6 +113,12 @@ install_yazi() {
     print_status "Yazi installed."
 }
 
+install_zoxide() {
+    download_and_extract "ajeetdsouza/zoxide" "zoxide-{VERSION_NO_V}-aarch64-unknown-linux-musl.tar.gz" "zoxide"
+    TOOLS_PATH="${TMP_DIR}/zoxide:${TOOLS_PATH}"
+    print_status "zoxide installed."
+}
+
 fetch_fish_config() {
     curl -sL "https://raw.githubusercontent.com/MarcelBochtler/instant-shell/refs/heads/main/config.fish" -o "${TMP_DIR}/config.fish"
 }
@@ -129,6 +135,7 @@ main() {
     install_fd
     install_ripgrep
     install_yazi
+    install_zoxide
 
     print_success "Setup complete."
 

@@ -3,6 +3,9 @@
 # Disable the fish greeting message
 set -g fish_greeting
 
+# Initialize zoxide
+zoxide init fish | source
+
 # Git aliases
 alias gst='git status'
 alias ga='git add'
