@@ -121,12 +121,6 @@ install_yazi() {
     print_status "Yazi installed."
 }
 
-install_zoxide() {
-    download_and_extract "ajeetdsouza/zoxide" "zoxide-{VERSION_NO_V}-x86_64-unknown-linux-musl.tar.gz" "zoxide" 0
-    TOOLS_PATH="${TMP_DIR}/zoxide:${TOOLS_PATH}"
-    print_status "zoxide installed."
-}
-
 install_jq() {
     download_and_extract "jqlang/jq" "jq-linux-amd64" "jq"
     TOOLS_PATH="${TMP_DIR}/jq:${TOOLS_PATH}"
@@ -155,7 +149,6 @@ main() {
     install_fd
     install_ripgrep
     install_yazi
-    install_zoxide
     install_jq
     install_yq
 

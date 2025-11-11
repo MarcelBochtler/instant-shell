@@ -3,9 +3,6 @@
 # Disable the fish greeting message
 set -g fish_greeting
 
-# Initialize zoxide (use 'z' command instead of overriding 'cd')
-zoxide init fish --cmd z | source
-
 # Git aliases
 alias gst='git status'
 alias ga='git add'
