@@ -28,6 +28,10 @@ print_error() {
     echo -e "${RED}$1${NC}"
 }
 
+safe_wget() {
+    wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 --tries=3 "$@"
+}
+
 download_and_extract() {
     local repo=$1 # GitHub repository in the format "owner/repo"
     local filename=$2 # Filename with placeholders {VERSION} or {VERSION_NO_V}
@@ -36,7 +40,7 @@ download_and_extract() {
 
     mkdir -p "${TMP_DIR}/${toolname}"
 
-    local version=$(curl -s https://api.github.com/repos/${repo}/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+    local version=$(safe_wget -qO- https://api.github.com/repos/${repo}/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
     local version_no_v="${version#v}"
 
     # Replace placeholders in filename
@@ -48,7 +52,7 @@ download_and_extract() {
     if [[ "$filename" == *.zip ]]; then
         # Handle zip files
         local temp_file="${TMP_DIR}/${toolname}.zip"
-        curl -sL "$url" -o "$temp_file"
+        safe_wget -O "$temp_file" "$url"
 
         local extract_dir="${TMP_DIR}/${toolname}_extract"
         mkdir -p "$extract_dir"
@@ -62,12 +66,12 @@ download_and_extract() {
 
         rm -rf "$extract_dir" "$temp_file"
     elif [[ "$filename" == *.tar.xz ]]; then
-        curl -sL "$url" | tar xJf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
+        safe_wget -qO- "$url" | tar xJf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
     elif [[ "$filename" == *.tar.gz ]]; then
-        curl -sL "$url" | tar xzf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
+        safe_wget -qO- "$url" | tar xzf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
     elif [[ "$filename" != *.* ]]; then
         # Handle binary files (no extension)
-        curl -sL "$url" -o "${TMP_DIR}/${toolname}/${toolname}"
+        safe_wget -O "${TMP_DIR}/${toolname}/${toolname}" "$url"
         chmod +x "${TMP_DIR}/${toolname}/${toolname}"
     else
         print_error "Unsupported file format: ${filename}"
@@ -136,7 +140,7 @@ install_yq() {
 }
 
 fetch_fish_config() {
-    curl -sL "https://raw.githubusercontent.com/MarcelBochtler/instant-shell/refs/heads/main/config.fish" -o "${TMP_DIR}/config.fish"
+    safe_wget -O "${TMP_DIR}/config.fish" "https://raw.githubusercontent.com/MarcelBochtler/instant-shell/refs/heads/main/config.fish"
 }
 
 # ============================================================================

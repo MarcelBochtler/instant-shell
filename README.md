@@ -7,11 +7,11 @@ A simple script to set up a pre-configured portable shell.
 Download and run the setup script:
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/MarcelBochtler/instant-shell/refs/heads/main/setup.bash)
+bash <(wget -qO- https://raw.githubusercontent.com/MarcelBochtler/instant-shell/refs/heads/main/setup.bash)
 ```
 
 ## Requirements
 
-- `curl` - for downloading
+- `wget` - for downloading
 - `tar` - for extracting
 - `bash` - for running the script
