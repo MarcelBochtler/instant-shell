@@ -29,7 +29,7 @@ print_error() {
 }
 
 safe_wget() {
-    wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 --tries=3 "$@"
+    wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 --tries=3 -q "$@"
 }
 
 download_and_extract() {
@@ -40,7 +40,7 @@ download_and_extract() {
 
     mkdir -p "${TMP_DIR}/${toolname}"
 
-    local version=$(safe_wget -qO- https://api.github.com/repos/${repo}/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+    local version=$(safe_wget -O- https://api.github.com/repos/${repo}/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
     local version_no_v="${version#v}"
 
     # Replace placeholders in filename
@@ -66,9 +66,9 @@ download_and_extract() {
 
         rm -rf "$extract_dir" "$temp_file"
     elif [[ "$filename" == *.tar.xz ]]; then
-        safe_wget -qO- "$url" | tar xJf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
+        safe_wget -O- "$url" | tar xJf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
     elif [[ "$filename" == *.tar.gz ]]; then
-        safe_wget -qO- "$url" | tar xzf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
+        safe_wget -O- "$url" | tar xzf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
     elif [[ "$filename" != *.* ]]; then
         # Handle binary files (no extension)
         safe_wget -O "${TMP_DIR}/${toolname}/${toolname}" "$url"
