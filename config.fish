@@ -15,3 +15,6 @@ alias ll='ls -lah'
 
 # File manager alias
 alias y='yazi'
+
+# Text editor alias
+alias m='micro'
