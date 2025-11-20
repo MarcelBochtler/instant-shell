@@ -29,7 +29,7 @@ print_error() {
 }
 
 safe_wget() {
-    wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 --tries=3 -q "$@"
+    wget --location --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 --tries=3 -q "$@"
 }
 
 download_and_extract() {
