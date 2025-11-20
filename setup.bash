@@ -28,8 +28,8 @@ print_error() {
     echo -e "${RED}$1${NC}"
 }
 
-safe_wget() {
-    wget --retry-connrefused --waitretry=1 --read-timeout=20 --timeout=15 --tries=3 -q "$@"
+safe_curl() {
+    curl --location --retry 3 --retry-connrefused --retry-delay 1 --connect-timeout 15 --max-time 20 --show-error --silent "$@"
 }
 
 download_and_extract() {
@@ -40,7 +40,8 @@ download_and_extract() {
 
     mkdir -p "${TMP_DIR}/${toolname}"
 
-    local version=$(safe_wget -O- https://api.github.com/repos/${repo}/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+    # Fetch version from Atom feed (no API rate limits)
+    local version=$(safe_curl "https://github.com/${repo}/releases.atom" | grep 'releases/tag' | grep -E 'releases/tag/v?[0-9]' | head -n 1 | sed -E 's/.*\/tag\/([^"]+).*/\1/')
     local version_no_v="${version#v}"
 
     # Replace placeholders in filename
@@ -52,7 +53,7 @@ download_and_extract() {
     if [[ "$filename" == *.zip ]]; then
         # Handle zip files
         local temp_file="${TMP_DIR}/${toolname}.zip"
-        safe_wget -O "$temp_file" "$url"
+        safe_curl -o "$temp_file" "$url"
 
         local extract_dir="${TMP_DIR}/${toolname}_extract"
         mkdir -p "$extract_dir"
@@ -66,12 +67,12 @@ download_and_extract() {
 
         rm -rf "$extract_dir" "$temp_file"
     elif [[ "$filename" == *.tar.xz ]]; then
-        safe_wget -O- "$url" | tar xJf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
+        safe_curl "$url" | tar xJf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
     elif [[ "$filename" == *.tar.gz ]]; then
-        safe_wget -O- "$url" | tar xzf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
+        safe_curl "$url" | tar xzf - -C "${TMP_DIR}/${toolname}" --strip-components=${strip}
     elif [[ "$filename" != *.* ]]; then
         # Handle binary files (no extension)
-        safe_wget -O "${TMP_DIR}/${toolname}/${toolname}" "$url"
+        safe_curl -o "${TMP_DIR}/${toolname}/${toolname}" "$url"
         chmod +x "${TMP_DIR}/${toolname}/${toolname}"
     else
         print_error "Unsupported file format: ${filename}"
@@ -134,7 +135,7 @@ install_yq() {
 }
 
 fetch_fish_config() {
-    safe_wget -O "${TMP_DIR}/config.fish" "https://raw.githubusercontent.com/MarcelBochtler/instant-shell/refs/heads/main/config.fish"
+    safe_curl -o "${TMP_DIR}/config.fish" "https://raw.githubusercontent.com/MarcelBochtler/instant-shell/refs/heads/main/config.fish"
 }
 
 # ============================================================================
